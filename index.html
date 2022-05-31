@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flixster - Using TheMovieDB</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width">
+    <!-- API version 3 documentation: 
+        https://developers.themoviedb.org/3/movies
+        https://developers.themoviedb.org/3/movies/get-now-playing
+        Good example code:
+        https://www.youtube.com/watch?v=bpHtxx_wmqw
+
+        Signup for APIs:
+        https://www.themoviedb.org/signup
+
+        Signup for API Key:
+        https://www.themoviedb.org/settings/api/new/form?type=developer
+    -->
+</head>
+<body>
+    <h1><img src="popcorn.jpeg" alt="Popcorn" width="40" height="40"/>Doug's Flixster Example</h1>
+    <h2>Now Playing</h2>
+    <!--
+    <p><img src="https://image.tmdb.org/t/p/w185/s2xcqSFfT6F7ZXHxowjxfG0yisT.jpg" alt="Jaws"/></p>
+Note that this came back:  poster_path": "/s2xcqSFfT6F7ZXHxowjxfG0yisT.jpg"
+inside first entry in output from:
+let url = ''.concat(baseURL, 'search/movie?api_key=', APIKEY, '&language=en-US&page=1';
+
+    This is good URL:
+    https://api.themoviedb.org/3/movie/now_playing?api_key=c0074ea9aae97a08966cee9bd6295860&language=en-US&page=1
+poster_path":"/jrgifaYeUtTnaH7NF5Drkgjg2MB.jpg
+"original_title":"Fantastic Beasts: The Secrets of Dumbledore"
+
+This is a good URL:
+https://www.youtube.com/watch?v=bpHtxx_wmqw   Introduction to TheMovieDB API
+-->
+    <!-- This next line is good to show all of the output !!! :
+        <p>< src="https://api.themoviedb.org/3/movie/now_playing?api_key=c0074ea9aae97a08966cee9bd6295860&language=en-US&page=1"/></p>
+    -->
+    <!-- Hack alert - this is ugly to hard-code 20 HTML items -->
+    <div class="movie" id="output0"><!-- output will go here --></div>
+    <div class="movie" id="output1"><!-- output will go here --></div>
+    <div class="movie" id="output2"><!-- output will go here --></div>
+    <div class="movie" id="output3"><!-- output will go here --></div>
+    <div class="movie" id="output4"><!-- output will go here --></div>
+    <div class="movie" id="output5"><!-- output will go here --></div>
+    <div class="movie" id="output6"><!-- output will go here --></div>
+    <div class="movie" id="output7"><!-- output will go here --></div>
+    <div class="movie" id="output8"><!-- output will go here --></div>
+    <div class="movie" id="output9"><!-- output will go here --></div>
+    <div class="movie" id="output10"><!-- output will go here --></div>
+    <div class="movie" id="output11"><!-- output will go here --></div>
+    <div class="movie" id="output12"><!-- output will go here --></div>
+    <div class="movie" id="output13"><!-- output will go here --></div>
+    <div class="movie" id="output14"><!-- output will go here --></div>
+    <div class="movie" id="output15"><!-- output will go here --></div>
+    <div class="movie" id="output16"><!-- output will go here --></div>
+    <div class="movie" id="output17"><!-- output will go here --></div>
+    <div class="movie" id="output18"><!-- output will go here --></div>
+    <div class="movie" id="output19"><!-- output will go here --></div>
+
+    <!-- Hack alert - the JavaScript really belong in script.js, not in this file -->
+    <script src="script.js"></script>
+    <script>
+        const APIKEY = 'c0074ea9aae97a08966cee9bd6295860';
+        /*************
+        SAMPLE URLS
+                
+        0. To get a list of all the movies now playing (defaults to 20)
+        https://api.themoviedb.org/3/movie/now_playing?api_key=<APIKEY>
+        
+        1. To get the config data like image base urls
+        https://api.themoviedb.org/3/configuration?api_key=<APIKEY>
+        
+        3. To fetch more details about a movie
+        https://api.themoviedb.org/3/movie/<movie-id>?api_key=<APIKEY>
+        *************/
+
+        let baseURL = 'https://api.themoviedb.org/3/';
+        let configData = null;
+        let baseImageURL = null;
+        
+        let getConfig = function () {
+            let url = "".concat(baseURL, 'configuration?api_key=', APIKEY); 
+            fetch(url)
+            .then((result)=>{
+                return result.json();
+            })
+            .then((data)=>{
+                baseImageURL = data.images.secure_base_url;
+                configData = data.images;
+                console.log('config:', data);
+                runSearch('n-US')  // en-US  // es // ar (arabic) // es-mx // en-GB // ar-eg
+            })
+            .catch(function(err){
+                alert(err);
+            });
+        }
+        console.log('you are here 5');
+        let runSearch = function (lang) {
+            let url = ''.concat(baseURL, 'movie/now_playing?api_key=', APIKEY, '&language=', lang);
+            fetch(url)
+            .then(result=>result.json())
+            .then((data)=>{
+                //process the returned data
+                document.getElementById('output0').innerHTML = JSON.stringify(data, null, 4);
+                //work with results array... 
+
+                //myObj = JSON.parse(result);
+                document.getElementById('output2').innerHTML = JSON.stringify(data.results[1].original_title, null, 4);
+                for (let i = 0; i < 20; i++) {
+                    document.getElementById('output' + i).innerHTML = '<p><img src="https://image.tmdb.org/t/p/w185/'
+                    + data.results[i].poster_path + '" alt="' + data.results[i].original_title
+                    + '" title="' + data.results[i].overview + '"/></p>'
+                    + '<p>&#11088; ' + data.results[i].vote_average + '<br/>'
+                    + data.results[i].original_title + '</p>';
+                }
+/* example values for data.results[i]:
+"poster_path":"/jrgifaYeUtTnaH7NF5Drkgjg2MB.jpg
+"original_title":"Fantastic Beasts: The Secrets of Dumbledore"
+"vote_average": 6.4,*/
+            })
+        }
+        document.addEventListener('DOMContentLoaded', getConfig);
+    </script>
+</body>
+</html>
